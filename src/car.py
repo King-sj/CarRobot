@@ -1,7 +1,7 @@
 import asyncio
-from car_protocols import CarSendProtocol, CarReceiveProtocol
+from src.car_protocols import CarSendProtocol, CarReceiveProtocol
 import logging
-from config import Config
+from src.config import Config
 
 logger = logging.getLogger(__name__)
 

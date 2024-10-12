@@ -33,6 +33,9 @@ class CarReceiveProtocol:
   @staticmethod
   def from_json(json_data):
     json_data = json.loads(json_data)
+    distance:float|None = None
+    front_light:int|None = None
+    bottom_light:int|None = None
     for sensor in json_data['sensors']:
       if sensor['id'] == 4:
         distance = sensor['value']
@@ -40,6 +43,8 @@ class CarReceiveProtocol:
         front_light = sensor['value']
       elif sensor['id'] == 1:
         bottom_light = sensor['value']
+    if distance is None or front_light is None or bottom_light is None:
+      raise ValueError('json_data must have distance, front_light, bottom_light')
     return CarReceiveProtocol(distance, front_light, bottom_light)
 
   def get_distance(self):

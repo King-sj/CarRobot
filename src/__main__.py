@@ -1,7 +1,7 @@
-from car import Car
-from logging_config import setup_logging
+from src.car import Car
+from src.logging_config import setup_logging
 import logging
-from config import Config
+from src.config import Config
 import asyncio
 logger = logging.getLogger(__name__)
 
