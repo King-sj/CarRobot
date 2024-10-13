@@ -49,10 +49,10 @@ class CarReceiveProtocol:
 
   def get_distance(self):
     return self.distance.value
-
+  @property
   def in_road(self):
     return self.bottom_light.value == 1
-
+  @property
   def have_obstacle(self):
     return self.front_light.value == 1
 

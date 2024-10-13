@@ -2,12 +2,12 @@ import asyncio
 from src.car_protocols import CarSendProtocol, CarReceiveProtocol
 import logging
 from src.config import Config
-
+from typing import Tuple,TypeVar
 logger = logging.getLogger(__name__)
 
 
 class Car:
-
+  COMP_T = TypeVar('COMP_T', float, int)
   def __init__(self):
     """
     必须调用connect
@@ -15,6 +15,7 @@ class Car:
     self.writer: asyncio.StreamWriter | None = None
     self.reader: asyncio.StreamReader | None = None
     self.r_data: CarReceiveProtocol | None = None
+    self.speed:Tuple[None|float,None|float] = (None,None)
 
   async def connect(self):
     logger.debug(f"Connecting to server {Config.ServerIP}:{Config.ServerPort}")
@@ -44,21 +45,27 @@ class Car:
     logger.debug(f"Received: {data}")
     self.r_data = CarReceiveProtocol.from_json(data)
 
+  def __in_range(self, p:COMP_T, l:COMP_T , r:COMP_T) -> bool:
+    return l <= p and p <= r
   def set_speed(self, left_speed, right_speed):
+    if not isinstance(left_speed,float) or not isinstance(right_speed,float):
+      raise TypeError("speed should be float")
+    if self.__in_range(left_speed,0,1) and self.__in_range(right_speed,0,1):
+      raise ValueError("speed should between 0.0 to 1.0")
     self.__send(str(CarSendProtocol(left_speed, right_speed)))
-
+  @property
   def distance(self):
     if self.r_data is None:
       logger.debug("not receive any data")
       return None
-    return self.r_data.distance
-
+    return self.r_data.distance.value
+  @property
   def in_road(self):
     if self.r_data is None:
       logger.debug("not receive any data")
       return None
     return self.r_data.in_road
-
+  @property
   def have_obstacle(self):
     if self.r_data is None:
       logger.debug("not receive any data")
