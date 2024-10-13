@@ -9,10 +9,22 @@ async def main():
   setup_logging()
   car = Car()
   await car.connect()
-  car.set_speed(100, 100)
+  car.set_speed(0.5, 0.5)
   print(car.in_road)
   print(car.distance)
   print(car.have_obstacle)
+  while True:
+    # 检测ctrl+c信号并让小车停止
+    try:
+      pass
+    except KeyboardInterrupt:
+      break
+    except Exception as e:
+      logger.error(f"{e}")
+    finally:
+      car.set_speed(0, 0)
+      logger.info("Car stop")
+      break
 
   # TODO more code/func need call
 

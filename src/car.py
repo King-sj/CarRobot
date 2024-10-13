@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class Car:
-  COMP_T = TypeVar('COMP_T', float, int)
+  COMP_T = float
   def __init__(self):
     """
     必须调用connect
@@ -22,7 +22,9 @@ class Car:
     self.reader, self.writer = await asyncio.open_connection(
         Config.ServerIP, Config.ServerPort)
     # 启动一个协程来接收数据
-    asyncio.create_task(self.__receive())
+    task = asyncio.create_task(self.__receive())
+    # asyncio.run(self.__receive())
+    await task
 
   def __send(self, message):
     if self.writer is None:
@@ -39,18 +41,19 @@ class Car:
     if self.reader is None:
       raise RuntimeError(
           "connection maybe disconnected, check your link to car")
-    logger.debug("Waiting for data")
-    data = await self.reader.readuntil(b'\r\n')
-    data = data.decode('utf-8')
-    logger.debug(f"Received: {data}")
-    self.r_data = CarReceiveProtocol.from_json(data)
+    while True:
+      logger.debug("Waiting for data")
+      data = await self.reader.readuntil(b'\r\n')
+      data = data.decode('utf-8')
+      logger.debug(f"Received: {data}")
+      self.r_data = CarReceiveProtocol.from_json(data)
 
   def __in_range(self, p:COMP_T, l:COMP_T , r:COMP_T) -> bool:
     return l <= p and p <= r
-  def set_speed(self, left_speed, right_speed):
+  def set_speed(self, left_speed:float, right_speed:float):
     if not isinstance(left_speed,float) or not isinstance(right_speed,float):
       raise TypeError("speed should be float")
-    if self.__in_range(left_speed,0,1) and self.__in_range(right_speed,0,1):
+    if not self.__in_range(left_speed,0,1) or not self.__in_range(right_speed,0,1):
       raise ValueError("speed should between 0.0 to 1.0")
     self.__send(str(CarSendProtocol(left_speed, right_speed)))
   @property
