@@ -51,7 +51,7 @@ class CarReceiveProtocol:
     return self.distance.value
   @property
   def in_road(self):
-    return self.bottom_light.value == 1
+    return self.bottom_light.value == 0
   @property
   def have_obstacle(self):
     return self.front_light.value == 1
