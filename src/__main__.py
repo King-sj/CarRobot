@@ -15,10 +15,11 @@ async def control_car(car:Car):
       continue
     if not car.in_road:
       await car.adjustment_dir(Direction.RIGHT,1,lambda:car.in_road)
-    if (car.distance < 20):
-      print("change state")
+    if car.have_obstacle:
+      await car.adjustment_dir(Direction.RIGHT,1,lambda:not car.have_obstacle)
+    if (car.distance < 40):
       await car.adjustment_dir(Direction.RIGHT,1,lambda:car.distance!=None and car.distance>40)
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.1) # wait for updating state
 
 async def main():
   setup_logging()
