@@ -9,13 +9,15 @@ logger = logging.getLogger(__name__)
 
 class Car:
   '''
-  This is a Car
-  @attention
-  ```await asyncio.sleep(0.1)``` need
-  @TODO
-  add more docs
+  Basic car, only provides communication, automatic state updates, speed setting, and state retrieval functions.
 
-  @Example:
+  .. warning::
+  ```
+    await sleep some times is necessary to release thread for other coroutine.
+  ```
+
+
+  Example Usage:
   ```python
   async def control_car(car:Car):
     car.set_speed(0.5, 0.5)
