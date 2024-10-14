@@ -34,6 +34,7 @@ from src.logging_config import setup_logging
 import logging
 from src.config import Config
 import asyncio
+logger = logging.getLogger(__name__)
 # @attention await sleep some times is necessary to release thread for other coroutine.
 async def control_car(car: Car):
   car.set_speed(0.5, 0.5)
