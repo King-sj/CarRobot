@@ -54,7 +54,7 @@ class CarReceiveProtocol:
     return self.bottom_light.value == 0
   @property
   def have_obstacle(self):
-    return self.front_light.value == 1
+    return self.front_light.value == 0
 
 
 class CarSendProtocol:
