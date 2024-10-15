@@ -66,7 +66,7 @@ class CarSendProtocol:
       self.servospeed: float = servospeed
 
     def __str__(self):
-      return f'{{"servoId":{self.servoid}, "servoSpeed":{self.servospeed}}}'
+      return f'{{"servoId":{self.servoid}, "servoSpeed":{self.servospeed:.2f}}}'
 
   def __init__(self, left_speed: float, right_speed: float):
     self.letServoMove = self.SendData(6, left_speed)

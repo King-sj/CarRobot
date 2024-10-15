@@ -76,7 +76,6 @@ class Car:
     print("begin update")
     while True:
       await self.__receive()
-      # await asyncio.sleep(0.1)
 
   async def __receive(self):
     if self.reader is None:
@@ -96,7 +95,7 @@ class Car:
       raise TypeError("speed should be float")
     if not self.__in_range(left_speed, -1, 1) or not self.__in_range(
         right_speed, -1, 1):
-      raise ValueError("speed should between 0.0 to 1.0")
+      raise ValueError("speed should between -1.0 to 1.0")
     self.__send(str(CarSendProtocol(left_speed, right_speed)))
 
   @property
