@@ -13,9 +13,10 @@ class RobotCraftCar(Car):
     # 轮速差同步
     left_speed *= 0.72
     return super().set_speed(left_speed, right_speed)
-  async def stop(self,duration:float):
+  async def stop(self,duration:float|None=None):
     self.set_speed(0.0,0.0)
-    await asyncio.sleep(duration)
+    if duration != None:
+      await asyncio.sleep(duration)
   def straight(self):
     self.set_speed(0.2,0.2)
   def turn_left(self):
@@ -26,26 +27,34 @@ class RobotCraftCar(Car):
     if is_right_gesture():
       return
     time_left = duration
-    delay = 0.05
+    delay = 0.1
     if (dir == Direction.LEFT):
       self.turn_left()
     else:
       self.turn_right()
+    print("begin turn")
     while time_left > 0:
       if is_right_gesture():
         break
       time_left -= delay
       await asyncio.sleep(delay)
-    self.straight()
+      print(f"current state: {self.distance}, {self.in_road}, {self.have_obstacle}")
+    print("end turn")
+    await self.stop(0.1)
   async def adjustment_dir(self, is_right_gesture:Callable):
     start_duration = 0.2
-    while not is_right_gesture():
+    while not is_right_gesture() and start_duration <= 0.4:
       await self.__adjustment_dir(Direction.LEFT,start_duration,is_right_gesture)
-      start_duration += 0.2
+      start_duration += 0.1
       if is_right_gesture():
         break
-      await self.stop(0.2)
+      await self.stop(0.2)          
+    await self.__adjustment_dir(Direction.RIGHT,0.3,is_right_gesture)
+    start_duration = 0.05
+    while not is_right_gesture() and start_duration <= 0.2:
       await self.__adjustment_dir(Direction.RIGHT,start_duration,is_right_gesture)
-      start_duration += 0.2
+      start_duration += 0.1
+      if is_right_gesture():
+        break
       await self.stop(0.2)
     self.straight()
