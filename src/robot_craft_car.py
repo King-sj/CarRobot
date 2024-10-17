@@ -7,54 +7,54 @@ class Direction(Enum):
   RIGHT = "right"
 
 class RobotCraftCar(Car):
+  base_straight_speed = 0.7
+  base_turn_speed = 0.1
   def __init__(self):
     super().__init__()
   def set_speed(self, left_speed: float, right_speed: float):
-    # 轮速差同步
-    left_speed *= 0.72
     return super().set_speed(left_speed, right_speed)
-  async def stop(self,duration:float|None=None):
+  def stop(self):
     self.set_speed(0.0,0.0)
-    if duration != None:
-      await asyncio.sleep(duration)
-  def straight(self):
-    self.set_speed(0.2,0.2)
+  def straight(self,is_right_gesture:Callable[[],bool|None]):
+    self.set_speed(self.base_straight_speed,self.base_straight_speed)
+    # straight_speed = self.base_straight_speed
+    # duration = 0.05
+    # step = 1.3
+    # while is_right_gesture():
+    #   self.set_speed(straight_speed,straight_speed)
+    #   await asyncio.sleep(duration)
+    #   if not is_right_gesture():
+    #     break
+    #   straight_speed *= step
+    #   if straight_speed > 1.0:
+    #     straight_speed = 1.0
+    # self.stop()
+    
   def turn_left(self):
-    self.set_speed(-0.2,0.2)
+    self.set_speed(-self.base_turn_speed,self.base_turn_speed)
   def turn_right(self):
-    self.set_speed(0.2,-0.2)
-  async def __adjustment_dir(self, dir:Direction, duration:float, is_right_gesture:Callable):
+    self.set_speed(self.base_turn_speed,-self.base_turn_speed)
+  async def __adjustment_dir(self, dir:Direction, duration:float, is_right_gesture:Callable[[],bool|None]):
     if is_right_gesture():
+      self.straight(is_right_gesture)
       return
-    time_left = duration
-    delay = 0.1
-    if (dir == Direction.LEFT):
+    if dir == Direction.LEFT:
       self.turn_left()
     else:
       self.turn_right()
-    print("begin turn")
-    while time_left > 0:
-      if is_right_gesture():
-        break
-      time_left -= delay
-      await asyncio.sleep(delay)
-      print(f"current state: {self.distance}, {self.in_road}, {self.have_obstacle}")
-    print("end turn")
-    await self.stop(0.1)
-  async def adjustment_dir(self, is_right_gesture:Callable):
-    start_duration = 0.2
-    while not is_right_gesture() and start_duration <= 0.4:
-      await self.__adjustment_dir(Direction.LEFT,start_duration,is_right_gesture)
-      start_duration += 0.1
-      if is_right_gesture():
-        break
-      await self.stop(0.2)          
-    await self.__adjustment_dir(Direction.RIGHT,0.3,is_right_gesture)
-    start_duration = 0.05
-    while not is_right_gesture() and start_duration <= 0.2:
-      await self.__adjustment_dir(Direction.RIGHT,start_duration,is_right_gesture)
-      start_duration += 0.1
-      if is_right_gesture():
-        break
-      await self.stop(0.2)
-    self.straight()
+    while duration > 0 and not is_right_gesture():
+      await asyncio.sleep(0.01)
+      duration -= 0.01
+    if is_right_gesture():
+      self.straight(is_right_gesture)
+      return
+  async def adjustment_dir(self, is_right_gesture:Callable[[],bool|None]):
+    if is_right_gesture():
+      return
+    # 左转 0.5 s
+    await self.__adjustment_dir(Direction.LEFT,0.5,is_right_gesture)
+    # 右转 1.0 s
+    await self.__adjustment_dir(Direction.RIGHT,2.0,is_right_gesture)
+    # 左转 4.0 s
+    await self.__adjustment_dir(Direction.LEFT,4.0,is_right_gesture)
+    

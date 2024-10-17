@@ -54,7 +54,6 @@ class Car:
     self.writer: asyncio.StreamWriter | None = None
     self.reader: asyncio.StreamReader | None = None
     self.r_data: CarReceiveProtocol | None = None
-    self.speed: Tuple[None | float, None | float] = (None, None)
 
   async def connect(self):
     logger.debug(f"Connecting to server {Config.ServerIP}:{Config.ServerPort}")
