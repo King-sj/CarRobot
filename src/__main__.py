@@ -10,9 +10,10 @@ async def control_car(car:Car):
   is_right_gesture = \
       lambda: car.in_road \
       and (not car.have_obstacle)\
-      and (car.distance != None and car.distance > 40)
-  while True:
-    car.straight(is_right_gesture)
+      and (car.distance != None and car.distance > 20)
+  # await car.temp(Direction.LEFT,1.5)
+  await car.straight(is_right_gesture)
+  while True: 
     print(f"current state: {car.distance}, {car.in_road}, {car.have_obstacle}")
     if(car.distance is None or car.in_road is None):
       await asyncio.sleep(0.1) # sleep some times to release thread
