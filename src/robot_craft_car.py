@@ -31,7 +31,7 @@ class RobotCraftCar(Car):
     #   if straight_speed > 1.0:
     #     straight_speed = 1.0
     # self.stop()
-    
+
   def turn_left(self):
     self.set_speed(-self.base_turn_speed*0.8,self.base_turn_speed*0.8)
     self.last_dir = Direction.LEFT
@@ -65,6 +65,7 @@ class RobotCraftCar(Car):
     self.stop()
   async def adjustment_dir(self, is_right_gesture:Callable[[],bool|None]):
     if is_right_gesture():
+      await self.straight(is_right_gesture)
       return
     if self.last_dir == Direction.LEFT:
       # 左转 0.5 s
@@ -89,5 +90,5 @@ class RobotCraftCar(Car):
       await self.back(0.5)
       await self.adjustment_dir(is_right_gesture)
 
-    
-    
+
+
