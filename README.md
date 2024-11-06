@@ -1,4 +1,4 @@
-# 智能车
+# Smart cars
 ## Environment Setup
 
 - Python 3.11
