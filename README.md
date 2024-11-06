@@ -1,4 +1,7 @@
 # Smart cars
+
+[Go to the Go version](https://github.com/DrinkLessMilkTea/robot_car)
+
 ## Environment Setup
 
 - Python 3.11
