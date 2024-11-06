@@ -1,41 +1,41 @@
-# Smart cars
+# 北京邮电大学创新学院时间智能车循迹 python 版
 
-[Go to the Go version](https://github.com/DrinkLessMilkTea/robot_car)
+[前往 Go 版本](https://github.com/DrinkLessMilkTea/robot_car)
 
 [lib](https://github.com/King-sj/CarRobot/tree/lib)
 
-## Languages
+## 多语言
 - [English](README.md)
 - [中文](README.zh.md)
 
-## Environment Setup
+## 环境设置
 
 - Python 3.11
-- No additional requirements
+- 无额外需求
 
-## How to Start
+## 如何开始
 
 ```sh
 python -m src
 ```
 
-**Or just press F5 in VSCode.**
+**或者在 VSCode 中按 F5。**
 
-## API Documentation
+## API 文档
 
-### General Car Class
+### 通用汽车类
 
-File: `src/car.py`
+文件: `src/car.py`
 
-- `Car()`: Create an instance
-- `connect()`: Asynchronously connect to the car's WiFi with tcp
-- `update_state()`: Asynchronously update the car's state
-- `set_speed(...)`: Set the car's speed
-- `distance`: Distance to an obstacle
-- `in_road`: Whether the car is on the correct path
-- `have_obstacle`: Whether there is an obstacle ahead (based on infrared signals)
+- `Car()`: 创建一个实例
+- `connect()`: 异步连接到汽车的 WiFi 并使用 tcp
+- `update_state()`: 异步更新汽车状态
+- `set_speed(...)`: 设置汽车速度
+- `distance`: 与障碍物的距离
+- `in_road`: 汽车是否在正确的路径上
+- `have_obstacle`: 前方是否有障碍物（基于红外信号）
 
-### Minimal Demo
+### 最小示例
 
 ```py
 from src.car import Car
@@ -48,15 +48,15 @@ logger = logging.getLogger(__name__)
 async def control_car(car: Car):
   car.set_speed(0.5, 0.5)
   while True:
-    print(f"current state: {car.distance}, {car.in_road}, {car.have_obstacle}")
+    print(f"当前状态: {car.distance}, {car.in_road}, {car.have_obstacle}")
     if car.distance is None or car.in_road is None or car.speed is None:
       await asyncio.sleep(0.1)
       continue
     if car.distance < 20:
-      print("change state")
+      print("改变状态")
       car.set_speed(0.5, 0.0)
     else:
-      print("change state")
+      print("改变状态")
       car.set_speed(0.5, 0.5)
     await asyncio.sleep(0.1)
 
@@ -72,15 +72,15 @@ async def main():
 if __name__ == "__main__":
   logger.setLevel(Config.LOG_LEVEL)
   asyncio.run(main())
-  print("done")
+  print("完成")
 ```
 
-### Intelligent Car
+### 智能汽车
 
-File: `src/robot_craft_car.py`
+文件: `src/robot_craft_car.py`
 
-- `class RobotCraftCar(Car)`: Further encapsulation for car
-some example
+- `class RobotCraftCar(Car)`: 进一步封装汽车
+一些示例
 ```py
 from src.car import Car
 from enum import Enum
@@ -114,7 +114,7 @@ class RobotCraftCar(Car):
       await asyncio.sleep(0.1)
     self.straight()
 ```
-### Example Usage
+### 示例用法
 
 ```py
 from src.robot_craft_car import RobotCraftCar as Car, Direction
@@ -128,14 +128,14 @@ logger = logging.getLogger(__name__)
 async def control_car(car: Car):
   car.set_speed(0.3, 0.3)
   while True:
-    print(f"current state: {car.distance}, {car.in_road}, {car.have_obstacle}")
+    print(f"当前状态: {car.distance}, {car.in_road}, {car.have_obstacle}")
     if car.distance is None or car.in_road is None or car.speed is None:
       await asyncio.sleep(0.1)
       continue
     if not car.in_road:
       await car.adjustment_dir(Direction.RIGHT, 1, lambda: car.in_road)
     if car.distance < 20:
-      print("change state")
+      print("改变状态")
       await car.adjustment_dir(Direction.RIGHT, 1, lambda: car.distance is not None and car.distance > 40)
     await asyncio.sleep(0.1)
 
@@ -151,11 +151,10 @@ async def main():
 if __name__ == "__main__":
   logger.setLevel(Config.LOG_LEVEL)
   asyncio.run(main())
-  print("done")
+  print("完成")
 ```
 
-## Communication Protocol
+## 通信协议
 
-![Protocol Diagram 1](image-1.png)
-![Protocol Diagram 2](image.png)
-
+![协议图 1](image-1.png)
+![协议图 2](image.png)
